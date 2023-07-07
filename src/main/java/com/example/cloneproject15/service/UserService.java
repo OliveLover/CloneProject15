@@ -203,11 +203,11 @@ public class UserService {
 
     }
 
-    @Transactional(readOnly = true)
-    public List<UserResponseDto> checkUserByBirthday() {
-        List<User> userList = userRepository.findByUserAndBirthday();
-        return userList.stream().map(UserResponseDto::new).collect(Collectors.toList());
-    }
+//    @Transactional(readOnly = true)
+//    public List<UserResponseDto> checkUserByBirthday() {
+//        List<User> userList = userRepository.findByUserAndBirthday();
+//        return userList.stream().map(UserResponseDto::new).collect(Collectors.toList());
+//    }
 
     @Transactional(readOnly = true)
     public ResponseDto userCheck(String userId) {

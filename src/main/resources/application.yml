@@ -1,0 +1,65 @@
+spring:
+  profiles:
+    default: local
+
+  datasource:
+    url: jdbc:h2:mem:~/cafeKioskApplication
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+cloud:
+  aws:
+    s3:
+      bucket: my-bucket-2023-07-07
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: AKIARKQLGHCMIQ5NHZ6C
+      secretKey: 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
+
+jwt:
+  secret:
+    key: 7ZWt7ZW0OTntmZTsnbTtjIXtlZzqta3snYTrhIjrqLjshLjqs4TroZzrgpjslYTqsIDsnpDtm4zrpa3tlZzqsJzrsJzsnpDrpbzrp4zrk6TslrTqsIDsnpA=
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true # (2.5~) Hibernate 초기화 이후 data.sql 실행
+
+  h2:
+    console:
+      enabled: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: never
