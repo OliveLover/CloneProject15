@@ -33,9 +33,9 @@ public class Chat extends TimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Chat (ChatDto chatDto, ChatRoom room, User user, MessageType type, String profile_image) {
-        this.sender = chatDto.getSender();
-        this.message = chatDto.getMessage();
+    public Chat (String sender, String message, ChatRoom room, User user, MessageType type, String profile_image) {
+        this.sender = sender;
+        this.message = message;
         this.room = room;
         this.user = user;
         this.userid = user.getUserid();

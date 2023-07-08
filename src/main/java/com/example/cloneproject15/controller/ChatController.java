@@ -45,7 +45,7 @@ public class ChatController {
     @Operation(summary = "채팅방  API" , description = "새로운 채팅방 생성")
     @ApiResponses(value ={@ApiResponse(responseCode= "200", description = "채팅방 생성 완료" )})
     @GetMapping("/chat/{roomId}")
-    public EnterUserDto findChatRoom(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<EnterUserDto> findChatRoom(@PathVariable String roomId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return chatService.findRoom(roomId, userDetails.getUser().getUsername());
     }
 
@@ -59,9 +59,7 @@ public class ChatController {
 
     @PostMapping("/chat/image")
     public String uploadImage(@RequestParam(value = "image", required = false) MultipartFile image, @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
-
-        String image_url = chatService.uploadImage(image);
-        return image_url;
+        return chatService.uploadImage(image);
     }
 
     @MessageMapping("/chat/send")
@@ -80,7 +78,7 @@ public class ChatController {
     }
 
     @GetMapping("/room")
-    public List<ChatRoomDto> showRoomList() {
+    public ResponseEntity<List<ChatRoomDto>> showRoomList() {
         return chatService.showRoomList();
     }
 

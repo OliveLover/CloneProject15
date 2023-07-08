@@ -60,6 +60,19 @@ public class ChatService {
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
+    public ResponseEntity<EnterUserDto> findRoom(String roomId, String userName) {
+        ChatRoom chatRoom = roomIdCheck(roomId);
+        User user = userNameCheck(userName);
+        List<Chat> chatList = chatRepository.findAllByRoom_IdOrderByCreatedDateAsc(chatRoom.getId());
+        List<ChatDto> chatDtoList = new ArrayList<>();
+        for (Chat chat : chatList) {
+            ChatDto chatDto = new ChatDto(chat);
+            chatDtoList.add(chatDto);
+        }
+        EnterUserDto enterUserDto = new EnterUserDto(userName, user.getUserid(), chatRoom.getRoomId(), user.getProfile_image(), chatDtoList);
+        return new ResponseEntity<>(enterUserDto, HttpStatus.OK);
+    }
+
     public ChatDto enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
         ChatRoom chatRoom = validExistChatRoom(chatDto.getRoomId());
         headerAccessor.getSessionAttributes().put("userId", chatDto.getUserId());
@@ -113,7 +126,7 @@ public class ChatService {
         );
     }
 
-    public List<ChatRoomDto> showRoomList() {
+    public ResponseEntity<List<ChatRoomDto>> showRoomList() {
         List<ChatRoom>chatRoomList = chatRoomRepository.findAll();
         List<ChatRoomDto> chatRoomDtoList = new ArrayList<>();
         for (ChatRoom chatRoom : chatRoomList) {
@@ -122,7 +135,7 @@ public class ChatService {
             ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom, profile_image);
             chatRoomDtoList.add(chatRoomDto);
         }
-        return chatRoomDtoList;
+        return new ResponseEntity<>(chatRoomDtoList, HttpStatus.OK);
     }
 
     public ChatRoom roomIdCheck(String roomId) {
@@ -143,18 +156,6 @@ public class ChatService {
         );
     }
 
-    public EnterUserDto findRoom(String roomId, String userName) {
-        ChatRoom chatRoom = roomIdCheck(roomId);
-        User user = userNameCheck(userName);
-        List<Chat> chatList = chatRepository.findAllByRoom_IdOrderByCreatedDateAsc(chatRoom.getId());
-        List<ChatDto> chatDtoList = new ArrayList<>();
-        for (Chat chat : chatList) {
-            ChatDto chatDto = new ChatDto(chat);
-            chatDtoList.add(chatDto);
-        }
-        return new EnterUserDto(userName, user.getUserid(), chatRoom.getRoomId(), user.getProfile_image(), chatDtoList);
-    }
-
     public void sendChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
 
         ChatRoom room = roomIdCheck(chatDto.getRoomId());
@@ -168,7 +169,7 @@ public class ChatService {
         chatDto.setDate(dateformat);
         chatDto.setProfile_image(user.getProfile_image());
 
-        Chat chat = new Chat(chatDto, room, user, type, profile_image);
+        Chat chat = new Chat(chatDto.getSender(),chatDto.getMessage(), room, user, type, profile_image);
         chatRepository.save(chat);
     }
 
