@@ -4,10 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.example.cloneproject15.dto.ChatDto;
-import com.example.cloneproject15.dto.ChatRoomDto;
-import com.example.cloneproject15.dto.EnterUserDto;
-import com.example.cloneproject15.dto.ResponseDto;
+import com.example.cloneproject15.dto.*;
 import com.example.cloneproject15.entity.Chat;
 import com.example.cloneproject15.entity.ChatRoom;
 import com.example.cloneproject15.entity.MessageType;
@@ -20,6 +17,8 @@ import com.example.cloneproject15.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,14 +47,17 @@ public class ChatService {
     private final UserRepository userRepository;
     private final ChatRepository chatRepository;
 
-    public ResponseDto createChatRoom(String roomName, String host, User user) {
+    public ResponseEntity<CreateChatRoomResponseDto> createChatRoom(String roomName, String host, User user) {
         Optional<ChatRoom> findChatRoom = validExistChatRoom(host, roomName);
-        if(findChatRoom.isPresent())
-            return ResponseDto.setSuccess("already has room and find Chatting Room Success!", findChatRoom.get().getRoomId());
+        if(findChatRoom.isPresent()) {
+            CreateChatRoomResponseDto responseDto = new CreateChatRoomResponseDto("already has room and find Chatting Room Success!", findChatRoom.get().getRoomId());
+            return new ResponseEntity<>(responseDto, HttpStatus.NOT_ACCEPTABLE);
+        }
 
         ChatRoom newChatRoom = new ChatRoom(roomName, host, user.getUserid());
         chatRoomRepository.save(newChatRoom);
-        return ResponseDto.setSuccess("create ChatRoom success", newChatRoom.getRoomId());
+        CreateChatRoomResponseDto responseDto = new CreateChatRoomResponseDto("create ChatRoom success", newChatRoom.getRoomId());
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     public ChatDto enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {

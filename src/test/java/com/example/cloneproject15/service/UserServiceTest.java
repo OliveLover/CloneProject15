@@ -1,7 +1,6 @@
 package com.example.cloneproject15.service;
 
 import com.example.cloneproject15.entity.User;
-import com.example.cloneproject15.entity.UserRoleEnum;
 import com.example.cloneproject15.repository.UserRepository;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +11,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 import static com.example.cloneproject15.entity.UserRoleEnum.USER;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ActiveProfiles("test")
 @DataJpaTest
@@ -38,12 +38,10 @@ class UserServiceTest {
         userRepository.save(user);
 
         // then
-        assertEquals(userId, user.getUserid());
-        assertEquals(userName, user.getUsername());
-        assertEquals(birthday, user.getBirthday());
-        assertEquals(image_url, user.getProfile_image());
-        assertEquals(comment, user.getComment());
-        assertEquals(password, user.getPassword());
+        assertThat(user)
+                .extracting(User::getUserid, User::getUsername, User::getBirthday, User::getProfile_image, User::getComment, User::getPassword)
+                .containsExactly(userId, userName, birthday, image_url, comment, password);
+
     }
 
     @Test

@@ -55,7 +55,7 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
-                .requestMatchers(PathRequest.toH2Console())
+                //.requestMatchers(PathRequest.toH2Console())
                 .and().ignoring().requestMatchers(PERMIT_URL_ARRAY);
     }
 

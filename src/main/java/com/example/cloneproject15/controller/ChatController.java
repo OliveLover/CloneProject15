@@ -1,10 +1,7 @@
 package com.example.cloneproject15.controller;
 
 
-import com.example.cloneproject15.dto.ChatDto;
-import com.example.cloneproject15.dto.ChatRoomDto;
-import com.example.cloneproject15.dto.EnterUserDto;
-import com.example.cloneproject15.dto.ResponseDto;
+import com.example.cloneproject15.dto.*;
 import com.example.cloneproject15.security.UserDetailsImpl;
 import com.example.cloneproject15.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -39,7 +37,7 @@ public class ChatController {
     @Operation(summary = "채팅방 생성 API" , description = "새로운 채팅방 생성")
     @ApiResponses(value ={@ApiResponse(responseCode= "200", description = "채팅방 생성 완료" )})
     @PostMapping("/chat")
-    public ResponseDto createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<CreateChatRoomResponseDto> createChatRoom(@RequestBody ChatRoomDto chatRoomDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         chatRoomDto.setHost(userDetails.getUser().getUsername());
         return chatService.createChatRoom(chatRoomDto.getRoomName(), chatRoomDto.getHost(), userDetails.getUser());
     }

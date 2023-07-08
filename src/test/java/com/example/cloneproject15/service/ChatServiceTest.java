@@ -39,6 +39,15 @@ class ChatServiceTest {
 
         // then
         assertThat(chatRooms).hasSize(2);
+        assertThat(chatRooms.get(0))
+                .isEqualTo(chatRoom1)
+                .extracting(ChatRoom::getRoomName, ChatRoom::getHost, ChatRoom::getUserid)
+                .containsExactly("Room1", "user1", "userId1");
+
+        assertThat(chatRooms.get(1))
+                .isEqualTo(chatRoom2)
+                .extracting(ChatRoom::getRoomName, ChatRoom::getHost, ChatRoom::getUserid)
+                .containsExactly("Room2", "user2", "userId2");
 
     }
 
@@ -67,6 +76,41 @@ class ChatServiceTest {
 
         // then
         assertThat(chatRoom.getHeadCount()).isEqualTo(3);
+
+    }
+
+    @Test
+    @DisplayName("채팅방을 입장하면 인원 수가 2명 이었다가 0명이 되면 채팅방은 사라진다.")
+    public void chatRoomDisappearsWhenParticipantsBecomeZero() {
+        // given
+        ChatRoom chatRoom = new ChatRoom("Room1", "user1", "userId1");
+        List<ChatRoom> chatRooms = chatRoomRepository.saveAll(List.of(chatRoom));
+        assertThat(chatRooms).hasSize(1);
+
+        User user1 = new User("userId1", "passWord", "김유저", USER, null, "1995-09-08", "comment1");
+        User user2 = new User("userId2", "passWord", "이유저", USER, null, "1992-12-03", "comment2");
+        List<User> users = userRepository.saveAll(List.of(user1, user2));
+        assertThat(users).hasSize(2);
+
+        user1.enterRoom(chatRoom);
+        user2.enterRoom(chatRoom);
+
+        Long beforeHeadCount = userRepository.countAllByRoom_Id(chatRoom.getId());
+        chatRoom.updateCount(beforeHeadCount);
+        assertThat(chatRoom.getHeadCount()).isEqualTo(2);
+
+        user1.exitRoom(chatRoom);
+        user2.exitRoom(chatRoom);
+        Long afterHeadCount = userRepository.countAllByRoom_Id(chatRoom.getId());
+
+        assertThat(afterHeadCount).isZero();
+
+        // when
+        if(afterHeadCount == 0) chatRoomRepository.deleteByRoomId(chatRoom.getRoomId());
+
+        // then
+        chatRooms = chatRoomRepository.findAll();
+        assertThat(chatRooms).hasSize(0);
 
     }
 

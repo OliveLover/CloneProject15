@@ -81,7 +81,6 @@ public class User extends TimeEntity{
         this.username = userRequestDto.getUsername();
         this.birthday = userRequestDto.getBirthday();
         this.comment = userRequestDto.getComment();
-//        this.profile_image = profile_image;
     }
 
 
