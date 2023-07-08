@@ -28,16 +28,16 @@ class ChatServiceTest {
     @Test
     @DisplayName("채팅방 2개 생성하고 조회한다.")
     public void findAllByChatRoom() {
-        //given
+        // given
         ChatRoom chatRoom1 = new ChatRoom("Room1", "user1", "userId1");
         ChatRoom chatRoom2 = new ChatRoom("Room2", "user2", "userId2");
 
         chatRoomRepository.saveAll(List.of(chatRoom1, chatRoom2));
 
-        //when
+        // when
         List<ChatRoom> chatRooms =chatRoomRepository.findAll();
 
-        //then
+        // then
         assertThat(chatRooms).hasSize(2);
 
     }
@@ -45,7 +45,7 @@ class ChatServiceTest {
     @Test
     @DisplayName("채팅방을 입장하면 인원 수가 3명 오른다.")
     public void countUpWhenEnterTheRoom() {
-        //given
+        // given
         ChatRoom chatRoom = new ChatRoom("Room1", "user1", "userId1");
         List<ChatRoom> chatRooms = chatRoomRepository.saveAll(List.of(chatRoom));
         assertThat(chatRooms).hasSize(1);
@@ -62,10 +62,10 @@ class ChatServiceTest {
 
         Long headCount = userRepository.countAllByRoom_Id(chatRoom.getId());
 
-        //when
+        // when
         chatRoom.updateCount(headCount);
 
-        //then
+        // then
         assertThat(chatRoom.getHeadCount()).isEqualTo(3);
 
     }

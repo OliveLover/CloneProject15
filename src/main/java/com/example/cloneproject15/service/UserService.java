@@ -58,7 +58,7 @@ public class UserService {
         String username = requestDto.getUsername();
         String birthday = requestDto.getBirthday();
 
-        if (!requestDto.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$")) { // 비밀번호 정규식 체크
+        if (!requestDto.getPassword().matches("^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$")) {
             sentrySupport.logSimpleMessage((ExceptionEnum.PASSWAORD_REGEX).getMessage());
             throw new ApiException(ExceptionEnum.PASSWAORD_REGEX);
         }
