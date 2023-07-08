@@ -49,32 +49,17 @@ public class ChatService {
     private final ChatRepository chatRepository;
 
     public ResponseDto createChatRoom(String roomName, String host, User user) {
-        //이미 reciever와 sender로 생성된 채팅방이 있는지 확인
         Optional<ChatRoom> findChatRoom = validExistChatRoom(host, roomName);
-        //있으면 ChatRoom의 roomId 반환
         if(findChatRoom.isPresent())
             return ResponseDto.setSuccess("already has room and find Chatting Room Success!", findChatRoom.get().getRoomId());
 
-        //없으면 receiver와 sender의 방을 생성해주고 roomId 반환
-        //ChatRoom newChatRoom = ChatRoom.of(receiver, sender);
-        //String roomId, String roomName, String host, String guest
         ChatRoom newChatRoom = new ChatRoom(roomName, host, user.getUserid());
         chatRoomRepository.save(newChatRoom);
         return ResponseDto.setSuccess("create ChatRoom success", newChatRoom.getRoomId());
     }
 
     public ChatDto enterChatRoom(ChatDto chatDto, SimpMessageHeaderAccessor headerAccessor) {
-
-//        Date date = new Date();
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        String dateformat = format.format(date);
-//
-//        chatDto.setDate(dateformat);
-
-        // 채팅방 찾기
         ChatRoom chatRoom = validExistChatRoom(chatDto.getRoomId());
-        // 예외처리
-        //반환 결과를 socket session에 사용자의 id로 저장
         headerAccessor.getSessionAttributes().put("userId", chatDto.getUserId());
         headerAccessor.getSessionAttributes().put("roomId", chatDto.getRoomId());
         headerAccessor.getSessionAttributes().put("nickName", chatDto.getSender());
